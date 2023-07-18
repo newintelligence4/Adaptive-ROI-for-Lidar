@@ -22,7 +22,8 @@
 대형화물트럭의 군집주행 모드에 적용 시 더 후방 라이다는 끄고 측방만 고려하는 등 더 높은 연산성능을 기대할 수 있다.
 
 ## Flowchart
-![flowchart](./imgs/flowchart_1.png){: width="100" height="100"}  ![flowchart](./imgs/flowchart_2.png){: width="100" height="100"}
+![flowchart](./imgs/flowchart_1.png)
+![flowchart](./imgs/flowchart_2.png)
 
 </br>
 
@@ -159,21 +160,21 @@ pass.setFilterFieldName("x");
 pass.setFilterLimits(-13.0, +2.5);
 pass.filter(output_cloud);
 ```
-![road_segmentation](./imgs/road_segmentation.png){: width="300" height="300"}
+![road_segmentation](./imgs/road_segmentation.png)
 > 실험결과 데이터셋 기준 24%의 압축률을 보임
 
 **2. 중심점 이동**  
 중심점을 이동하는 이유는 다음과 같다.
 - 이동하지 않는 경우:
     - 중복되는 구간이 많아 낭비되는 데이터가 상당하다.  
-    ![non_query](./imgs/non_adaptive.png){: width="200" height="200"}
+    ![non_query](./imgs/non_adaptive.png)
     - 각도를 조절한다면 아래와 같이 사각지대가 발생한다.  
-    ![non_query_angle](./imgs/non_adapvtive1.png){: width="200" height="200"}
+    ![non_query_angle](./imgs/non_adapvtive1.png)
 
 위 이미지처럼 각도를 기준으로 조절하기에는 사각지대 발생 혹은 중복지역 발생 등 여러 문제가 발생했고, 이에 아래와 같이 중심점을 이동해 설계했다.  
-![adaptive_horizon](./imgs/adaptive.png)  {: width="200" height="200"}
+![adaptive_horizon](./imgs/adaptive.png)  
 좌측 측방 라이다를 기준으로 그 각도 및 중심점 설정 기준은 아래와 같다.  
-![adaptive_point](./imgs/pointmove.png)  {: width="200" height="200"}
+![adaptive_point](./imgs/pointmove.png)  
 차량의 길이를 기준으로 `/2`한 값을 y축 좌표로, `/4`한 값을 x축 좌표로 지정했다.
 이는 각도를 계산한 값으로, 이에 관해서는 이후 각도이동에서 설명하도록 하겠다.
 
@@ -182,7 +183,7 @@ pass.filter(output_cloud);
 
 **3. 각도 제한**  
 차량 주변의 사각지대를 최소한으로 줄이는 동시에 센서 간의 중복영역을 최소화하기 위해 아래와 같은 설계로 각도를 제한한다.  
-![adaptive_angle](./imgs/angle_h.png){: width="200" height="200"}
+![adaptive_angle](./imgs/angle_h.png)
 - 전면은 전방 주시가 가능하고 빈 부분이 없는 각도일 것($4\degree$)
 - 후면은 차체를 가릴 수 있는 각도일 것($150\degree$)  
 
@@ -190,11 +191,11 @@ pass.filter(output_cloud);
 
 중심점을 이동하며 최대한의 각도를 포함하고, 영역의 범위에 큰 차이가 없도록 하기 위해서는 차체의 길이의 절반인 `y`좌표로 이동해야 한다. 이에 맞게 `2:1`의 비율을 유지하도록 `x`좌표 또한 `y`의 절반으로 지정해 이동하도록 고려했다.
 
-![adaptive_angle_result](./imgs/angle_result.png){: width="200" height="200"}
+![adaptive_angle_result](./imgs/angle_result.png)
 
 **4. 반경 제한**  
 차량의 속도를 기준으로 아래와 같은 조건을 만족하는 알고리즘을 설계했다. 주행 모드는 크게 2가지이며, 각각의 주행모드에서는 속도에 따라 선형적으로 반경이 증가한다.  
-![adaptive_distance](./imgs/distance_h.png){: width="200" height="200"}
+![adaptive_distance](./imgs/distance_h.png)
 
 반경의 수식은 아래와 같다.  
 > $L_{long} = v_x * (t_{delay} + t_{detect} + t_{safe})$
@@ -248,7 +249,7 @@ pass.filter(output_cloud);
 
 > $ angle = -0.2 \times (v_x - 80) + 5.7$
 
-![adaptive_vertical_result](./imgs/vertical_result.png){: width="200" height="200"}
+![adaptive_vertical_result](./imgs/vertical_result.png)
 
 #### Adaptive ROI - Prototype
 Horizon과 Vertical을 통합해 속도에 맞게 증가하는 모습을 나타내는 결과는 아래와 같다.
