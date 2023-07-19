@@ -3,6 +3,9 @@
 
 2023 Summer Internship Program at SKYAUTONET.   
 
+<img src="./imgs/main.gif" width="80%"/>  
+
+
 ## 개요
 <center>
 25톤 대형트럭의 자율주행화를 위한 라이다 설치방법 및 포인트 클라우드 데이터 압축을 위한 전처리 모듈
@@ -22,9 +25,8 @@
 대형화물트럭의 군집주행 모드에 적용 시 더 후방 라이다는 끄고 측방만 고려하는 등 더 높은 연산성능을 기대할 수 있다.
 
 ## Flowchart
-![flowchart](./imgs/flowchart_1.png)
-![flowchart](./imgs/flowchart_2.png)
-
+<img src="./imgs/flowchart_1.png" width="300"/>
+<img src="./imgs/flowchart_2.png" width="300"/>
 </br>
 
 ### Tools
@@ -39,16 +41,22 @@
 ## 라이다 설치
 ***1개의 상단부 서치 센서 대비 3개의 중단부 설치 센서를 이용해 감지 영역의 반경을 유지하며 25톤 대형트럭의 차체 근방 사각지대를 개선할 수 있다.***  
 </br>
-기존의 일반적인 라이다 설치 
+
+**기존의 일반적인 라이다 설치**
 > : 최상단(루프) 1개, FOV $360\degree$  
+
+<img src="./imgs/lidar.png"/>
 
 **문제점**  
 > 차량의 크기로 인해 사각지대가 매우 커진다.  
 > 이 경우 기울여 설치하는 방법을 사용하나 이 또한 먼 곳까지 커버할 수 없다.  
 
+</br>
 
-개선한 라이다 설치
+**개선한 라이다 설치**
 > 차체 중단부 3개(측방 2개, 후방 1개), FOV 측방 $270\degree$, 후방 $150\degree$  
+
+<img src="./imgs/lidar_2.png"/>
 
 **기대효과**
 > 차체 근방 사각지대 개선이 가능하다.  
@@ -72,6 +80,9 @@
 
 ### Ground Removal
 본 프로젝트에서는 차선 정보가 필요하지 않다. 또한 바닥은 타 데이터에 비해 등고선 형태를 띄고 있어 이후 처리에서 좋지 않은 영향을 미칠 수 있다.  
+
+<img src="./imgs/RANSAC.png" width="80%"/>
+
 이에 `RANSAC` 알고리즘을 사용해 바닥을 제거하고, 객체만 추출하는 프로그램을 작성했다.  
 > 이 외에도 `Pass Through` 필터를 이용해 `z`축을 일정 부분 제거하는 알고리즘도 존재하나, 사용한 데이터셋의 밑면이 평행하지 않았기 때문에 작동하지 않았다.
 
@@ -90,7 +101,10 @@
 복셀화, point cloud를 Voxel로 변환하는 작업  
 PCL에서는 `Voxel Grid filter`를 이용하여 복셀화를 진행
 
-진행 방법
+<img src="./imgs/voxel.png" width= "40%"/>
+
+
+알고리즘
 
 1. 사용자 정의로 적합한 Voxel크기(=leaf_size)를 선택
 
@@ -99,6 +113,7 @@ PCL에서는 `Voxel Grid filter`를 이용하여 복셀화를 진행
 3. 포인트들의 중심점을 계산 하고 나머지 포인트는 제거
 
 
+<img src="./imgs/voxel_1.png" width="40%"/>
 
 voxel 단위(=`leaf_size`)가크면 데이터의 양을 더 줄일수 있다. 하지만, 물체 표현력은 줄어듦  
 결국 복셀화는 계산 부하와 물체 표현력의 트레이드 오프 관계에서 최적의 단위(=`leaf_size`)를 구하는 것이 가장 중요
@@ -108,6 +123,8 @@ voxel 단위(=`leaf_size`)가크면 데이터의 양을 더 줄일수 있다. �
 #### SOR - Statistical Outlier Removal
 
 Statistical Outlier Removal는 outlier를 제거하는 알고리즘
+
+<img src="./imgs/SOR.png" width="40%"/>  
 
 n=1, 2, …, N 개의 point가 있을 때 n 번째 point를 기준으로 인접한 k개의 point들과 평균과 분산을 구해서 분산이 세팅한 parameter보다 큰 값이면 outlier로 간주하고 제거
 
@@ -160,21 +177,26 @@ pass.setFilterFieldName("x");
 pass.setFilterLimits(-13.0, +2.5);
 pass.filter(output_cloud);
 ```
-![road_segmentation](./imgs/road_segmentation.png)
+<img src="./imgs/road_segmentation.png" width="400"/>
+
 > 실험결과 데이터셋 기준 24%의 압축률을 보임
 
 **2. 중심점 이동**  
 중심점을 이동하는 이유는 다음과 같다.
 - 이동하지 않는 경우:
     - 중복되는 구간이 많아 낭비되는 데이터가 상당하다.  
-    ![non_query](./imgs/non_adaptive.png)
+    <img src="./imgs/non_adaptive.png" width="300"/>
     - 각도를 조절한다면 아래와 같이 사각지대가 발생한다.  
-    ![non_query_angle](./imgs/non_adapvtive1.png)
+    <img src="./imgs/non_adaptive1.png" width="300"/>
 
 위 이미지처럼 각도를 기준으로 조절하기에는 사각지대 발생 혹은 중복지역 발생 등 여러 문제가 발생했고, 이에 아래와 같이 중심점을 이동해 설계했다.  
-![adaptive_horizon](./imgs/adaptive.png)  
+
+<img src="./imgs/adaptive.png" width="300"/>  
+
 좌측 측방 라이다를 기준으로 그 각도 및 중심점 설정 기준은 아래와 같다.  
-![adaptive_point](./imgs/pointmove.png)  
+
+<img src="./imgs/pointmove.png" width="300"/>  
+
 차량의 길이를 기준으로 `/2`한 값을 y축 좌표로, `/4`한 값을 x축 좌표로 지정했다.
 이는 각도를 계산한 값으로, 이에 관해서는 이후 각도이동에서 설명하도록 하겠다.
 
@@ -183,7 +205,7 @@ pass.filter(output_cloud);
 
 **3. 각도 제한**  
 차량 주변의 사각지대를 최소한으로 줄이는 동시에 센서 간의 중복영역을 최소화하기 위해 아래와 같은 설계로 각도를 제한한다.  
-![adaptive_angle](./imgs/angle_h.png)
+<img src="./imgs/angle_h.png" width="300"/>
 - 전면은 전방 주시가 가능하고 빈 부분이 없는 각도일 것($4\degree$)
 - 후면은 차체를 가릴 수 있는 각도일 것($150\degree$)  
 
@@ -191,11 +213,12 @@ pass.filter(output_cloud);
 
 중심점을 이동하며 최대한의 각도를 포함하고, 영역의 범위에 큰 차이가 없도록 하기 위해서는 차체의 길이의 절반인 `y`좌표로 이동해야 한다. 이에 맞게 `2:1`의 비율을 유지하도록 `x`좌표 또한 `y`의 절반으로 지정해 이동하도록 고려했다.
 
-![adaptive_angle_result](./imgs/angle_result.png)
+<img src="./imgs/angle_result.png" width="500"/>  
 
 **4. 반경 제한**  
 차량의 속도를 기준으로 아래와 같은 조건을 만족하는 알고리즘을 설계했다. 주행 모드는 크게 2가지이며, 각각의 주행모드에서는 속도에 따라 선형적으로 반경이 증가한다.  
-![adaptive_distance](./imgs/distance_h.png)
+
+<img src="./imgs/distance_h.png" width="300"/>
 
 반경의 수식은 아래와 같다.  
 > $L_{long} = v_x * (t_{delay} + t_{detect} + t_{safe})$
@@ -214,8 +237,7 @@ pass.filter(output_cloud);
 |저속모드|60km/h|108m|
 |고속모드|80km/h|144m|
 
-![adaptive_distance_result](./imgs/distance_result.png)
-
+<img src="./imgs/distance_result.png" width="500"/>
 </br>
 
 #### Vertical ROI
@@ -243,16 +265,24 @@ pass.filter(output_cloud);
 |저속모드|60km/h|$9.5\degree$|
 |고속모드|80km/h|$5.7\degree$|
 
-![adaptive_vertical](./imgs/vertical.png)
+<img src="./imgs/vertical.png"/>
 
 저속모드에서 고속모드까지는 속도에 따라 선형적으로 각도가 변화하며 그 수식은 아래와 같이 도출했다.
 
 > $ angle = -0.2 \times (v_x - 80) + 5.7$
 
-![adaptive_vertical_result](./imgs/vertical_result.png)
+<img src="./imgs/vertical_result.png" width="500"/>
+
 
 #### Adaptive ROI - Prototype
 Horizon과 Vertical을 통합해 속도에 맞게 증가하는 모습을 나타내는 결과는 아래와 같다.
 
-<iframe width = "522" height = "200" src = https://youtu.be/MncOyu24Q5s frameborder = "0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<img src="./imgs/prototype.gif" width="90%"/>
+
+|속도|	모드	|Horizontal 반경	|Vertical 각도	|Filtered Point(Average)	|Rate|
+|--|--|--|--|--|--|
+|30km/h|	일반주행	|54	|   22.5|	1526|	99%|
+|60km/h|	저속주행	|108|	9.8|	2339|	98%|
+|80km/h	|   고속주행	|144|	5.7|	1978|	98%|
 
