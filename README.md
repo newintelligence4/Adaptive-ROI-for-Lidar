@@ -25,5 +25,5 @@ ros2 run back_lidar back_lidar_node
 ```
 
 ### Result
-<img src="./picture.png"/>
+<img src="./imgs/picture.png"/>
 
