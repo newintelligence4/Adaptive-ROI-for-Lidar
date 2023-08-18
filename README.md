@@ -1,4 +1,4 @@
-# BEVFusion  
+# Adaptive ROI for Lidar  
 ## Multi-LiDAR Preprocessing Module  
 
 2023 Summer Internship Program at SKYAUTONET.   
