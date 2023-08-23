@@ -176,7 +176,7 @@ pass.setFilterFieldName("x");
 pass.setFilterLimits(-13.0, +2.5);
 pass.filter(output_cloud);
 ```
-<img src="./imgs/road_segmentation.png" width="400"/>
+<img src="./imgs/road_segmentation.png" width="40%"/>
 
 > 실험결과 데이터셋 기준 24%의 압축률을 보임
 
@@ -184,18 +184,18 @@ pass.filter(output_cloud);
 중심점을 이동하는 이유는 다음과 같다.
 - 이동하지 않는 경우:
     - 중복되는 구간이 많아 낭비되는 데이터가 상당하다.  
-    <img src="./imgs/non_adaptive.png" width="500"/>
+    <img src="./imgs/non_adaptive.png" width="50%"/>
 
     - 각도를 조절한다면 아래와 같이 사각지대가 발생한다.  
-    <img src="./imgs/non_adaptive1.png" width="500"/>
+    <img src="./imgs/non_adaptive1.png" width="50%"/>
 
 위 이미지처럼 각도를 기준으로 조절하기에는 사각지대 발생 혹은 중복지역 발생 등 여러 문제가 발생했고, 이에 아래와 같이 중심점을 이동해 설계했다.  
 
-<img src="./imgs/adaptive.png" width="500"/>  
+<img src="./imgs/adaptive.png" width="50%"/>  
 
 좌측 측방 라이다를 기준으로 그 각도 및 중심점 설정 기준은 아래와 같다.  
 
-<img src="./imgs/pointmove.png" width="500"/>  
+<img src="./imgs/pointmove.png" width="50%"/>  
 
 차량의 길이를 기준으로 `/2`한 값을 y축 좌표로, `/4`한 값을 x축 좌표로 지정했다.
 이는 각도를 계산한 값으로, 이에 관해서는 이후 각도이동에서 설명하도록 하겠다.
@@ -205,7 +205,7 @@ pass.filter(output_cloud);
 
 **3. 각도 제한**  
 차량 주변의 사각지대를 최소한으로 줄이는 동시에 센서 간의 중복영역을 최소화하기 위해 아래와 같은 설계로 각도를 제한한다.  
-<img src="./imgs/angle_h.png" width="500"/>
+<img src="./imgs/angle_h.png" width="50%"/>
 - 전면은 전방 주시가 가능하고 빈 부분이 없는 각도일 것($4\degree$)
 - 후면은 차체를 가릴 수 있는 각도일 것($150\degree$)  
 
@@ -213,12 +213,12 @@ pass.filter(output_cloud);
 
 중심점을 이동하며 최대한의 각도를 포함하고, 영역의 범위에 큰 차이가 없도록 하기 위해서는 차체의 길이의 절반인 `y`좌표로 이동해야 한다. 이에 맞게 `2:1`의 비율을 유지하도록 `x`좌표 또한 `y`의 절반으로 지정해 이동하도록 고려했다.
 
-<img src="./imgs/angle_result.png" width="500"/>  
+<img src="./imgs/angle_result.png" width="50%"/>  
 
 **4. 반경 제한**  
 차량의 속도를 기준으로 아래와 같은 조건을 만족하는 알고리즘을 설계했다. 주행 모드는 크게 2가지이며, 각각의 주행모드에서는 속도에 따라 선형적으로 반경이 증가한다.  
 
-<img src="./imgs/distance_h.png" width="500"/>
+<img src="./imgs/distance_h.png" width="50%"/>
 
 반경의 수식은 아래와 같다.  
 > $L_{long} = v_x * (t_{delay} + t_{detect} + t_{safe})$
